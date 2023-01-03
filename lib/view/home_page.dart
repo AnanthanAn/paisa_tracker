@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 import 'package:paisa_tracker/controller/player_controller.dart';
 import 'package:paisa_tracker/controller/transaction_controller.dart';
 import 'package:paisa_tracker/model/player.dart';
 import 'package:paisa_tracker/model/transaction.dart';
 import 'package:paisa_tracker/widgets/player_select_tile.dart';
+import 'package:paisa_tracker/widgets/transaction_card.dart';
 import 'package:paisa_tracker/widgets/transaction_widget.dart';
 
 import '../model/player.dart';
@@ -29,19 +31,24 @@ class HomePage extends StatelessWidget {
         title: const Text('Paisa Tracker'),
       ),
       body: GetX<TransactionController>(builder: (controller) {
-        return ListView.builder(
-            itemCount: controller.transactions.length,
-            itemBuilder: (BuildContext context, int index) {
-              return InkWell(
-                onTap: () {
-                  openTransactonBottomsheet(
-                      index, controller.transactions[index]);
-                },
-                child: TransactionWidget(
-                  transaction: controller.transactions[index],
-                ),
-              );
-            });
+        return Align(
+          alignment: Alignment.topCenter,
+          child: ListView.builder(
+              reverse: true,
+              shrinkWrap: true,
+              itemCount: controller.transactions.length,
+              itemBuilder: (BuildContext context, int index) {
+                return InkWell(
+                  onTap: () {
+                    openTransactonBottomsheet(
+                        index, controller.transactions[index]);
+                  },
+                  child: TransactionCard(
+                    transaction: controller.transactions[index],
+                  ),
+                );
+              }),
+        );
       }),
       floatingActionButton: Row(
         mainAxisAlignment: MainAxisAlignment.end,
@@ -74,8 +81,11 @@ class HomePage extends StatelessWidget {
           padding: const EdgeInsets.all(8.0),
           child: Column(
             children: [
+              Text(
+                'Add Match',
+                textAlign: TextAlign.center,
+              ),
               const SizedBox(height: 20),
-              //buildName(),
               buildAmount(),
               const SizedBox(height: 8),
               buildDate(),
@@ -135,8 +145,6 @@ class HomePage extends StatelessWidget {
                         _isPaidAlready = element.name ==
                             transaction.playersPlayed[index].name;
                       });
-                      // debugPrint('--------name---------${transaction.playersPlayed[index].name}--------------------------------');
-                      // debugPrint('------------------------------${transaction.playersPaid.contains(transaction.playersPlayed[index].name)}---------------------------------------------');
                       debugPrint(
                           '------------------fgf------------${transaction.playersPaid.map((item) => item.name).contains(transaction.playersPlayed[index].name)}---------------------------------------------');
                       return PlayerSelectTile(
@@ -174,7 +182,9 @@ class HomePage extends StatelessWidget {
           padding: const EdgeInsets.all(8.0),
           child: Column(
             children: [
-              Text('Add Player'),
+              Text(
+                'Add Player',
+              ),
               const SizedBox(height: 20),
               buildName(),
               Spacer(),
@@ -216,8 +226,7 @@ class HomePage extends StatelessWidget {
   }
 
   Widget buildDate() => TextFormField(
-        //controller: nameController,
-        initialValue: DateTime.now().toString(),
+        initialValue: DateFormat.yMMMd().format(DateTime.now()),
         decoration: const InputDecoration(
           border: OutlineInputBorder(),
         ),
@@ -238,7 +247,6 @@ class HomePage extends StatelessWidget {
           Get.back();
         },
         child: const Text('Add Match'),
-        //onPressed: () => Navigator.of(context).pop(),
       );
   Widget buildUpdateMatchButton(int index, Transaction transactiont) =>
       TextButton(
@@ -262,21 +270,16 @@ class HomePage extends StatelessWidget {
   Widget buildAddPlayerButton() => TextButton(
         onPressed: () {
           final isValid = formKey.currentState!.validate();
-          debugPrint(
-              '----------------------${playerController.players.length}');
           if (isValid) {
             final name = nameController.text;
-
             final player = Player()..name = name;
-
             playerController.addPlayer(player);
           }
-          nameController.clear();
           Get.back();
+          Get.snackbar(
+              "Paisa Tracker", '${nameController.text} added to players!');
+          nameController.clear();
         },
         child: const Text('Add Player'),
-        // style: ButtonStyle(
-        //     backgroundColor:
-        //         MaterialStateProperty.resolveWith((states) => Colors.green)),
       );
 }
