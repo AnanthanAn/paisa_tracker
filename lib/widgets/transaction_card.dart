@@ -10,7 +10,7 @@ class TransactionCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
-      margin: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       child: Padding(
         padding: const EdgeInsets.all(5.0),
         child: Row(children: [
@@ -45,7 +45,8 @@ class TransactionCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text('Total : ₹${transaction.rentAmount}',
-                    style: TextStyle(fontSize: 18), textAlign: TextAlign.start),
+                    style: const TextStyle(fontSize: 18),
+                    textAlign: TextAlign.start),
                 const SizedBox(
                   height: 5,
                 ),
